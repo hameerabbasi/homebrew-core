@@ -15,11 +15,13 @@ class Gdb < Formula
   deprecated_option "with-guile" => "with-guile@2.0"
 
   option "with-python", "Use the Homebrew version of Python; by default system Python is used"
+  option "with-python3", "Use the Homebrew version of Python 3; by default system Python is used"
   option "with-version-suffix", "Add a version suffix to program"
   option "with-all-targets", "Build with support for all targets"
 
   depends_on "pkg-config" => :build
   depends_on "python" => :optional
+  depends_on "python3" => :optional
   depends_on "guile@2.0" => :optional
 
   fails_with :clang do
@@ -48,8 +50,13 @@ class Gdb < Formula
     args << "--with-guile" if build.with? "guile@2.0"
     args << "--enable-targets=all" if build.with? "all-targets"
 
-    if build.with? "python"
+    if build.with?("python") && build.with?("python3")
+      odie "Options --with-python and --with-python3 are mutually exclusive."
+    elsif build.with?("python")
       args << "--with-python=#{Formula["python"].opt_libexec}/bin"
+    elsif build.with?("python3")
+      args << "--with-python=#{Formula["python3"].opt_bin}/python3"
+      ENV.append "CPPFLAGS", "-I#{Formula["python"].opt_libexec}"
     else
       args << "--with-python=/usr"
     end

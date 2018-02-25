@@ -49,16 +49,16 @@ class Gdb < Formula
 
     args << "--with-guile" if build.with? "guile@2.0"
     args << "--enable-targets=all" if build.with? "all-targets"
-    
+
     if build.with?("python") && build.with?("python3")
-        odie "Options --with-python and --with-python3 are mutually exclusive."
+      odie "Options --with-python and --with-python3 are mutually exclusive."
     elsif build.with?("python")
-        args << "--with-python=#{Formula["python"].opt_libexec}/bin"
+      args << "--with-python=#{Formula["python"].opt_libexec}/bin"
     elsif build.with?("python3")
-        args << "--with-python=#{Formula["python3"].opt_bin}/python3"
-        ENV.append "CPPFLAGS", "-I#{Formula["python"].opt_libexec}"
+      args << "--with-python=#{Formula["python3"].opt_bin}/python3"
+      ENV.append "CPPFLAGS", "-I#{Formula["python"].opt_libexec}"
     else
-        args << "--with-python=/usr"
+      args << "--with-python=/usr"
     end
 
     if build.with? "version-suffix"
